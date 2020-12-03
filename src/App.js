@@ -1,6 +1,8 @@
 import { Layout, Typography, Button } from 'antd';
 import { useState } from 'react';
 import './App.css'
+import './theme.dark.less';
+import './theme.light.less';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -24,7 +26,7 @@ function App() {
   }
 
   return (
-    <Layout>
+    <Layout className={theme}>
       <Content className="content">
         <Title>{themeTexts[theme].titleText}</Title>
         <Button type="primary" onClick={changeTheme}>{themeTexts[theme].buttonText}</Button>

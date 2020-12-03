@@ -155,6 +155,39 @@ module.exports = function (webpackEnv) {
     return loaders;
   };
 
+  const getThemedStyleLoaders = (cssOptions, themePrefix) => {
+    const loaders = [
+      isEnvDevelopment && 'style-loader',
+      isEnvProduction && {
+        loader: MiniCssExtractPlugin.loader,
+        // css is located in `static/css`, use '../../' to locate index.html folder
+        // in production `paths.publicUrlOrPath` can be a relative path
+        options: paths.publicUrlOrPath.startsWith('.')
+          ? { publicPath: '../../' }
+          : {},
+      },
+      {
+        loader: 'css-loader',
+        options: cssOptions,
+      },
+      {
+        loader: 'postcss-loader',
+        options: {
+          plugins: () => [require('postcss-prefixwrap')(themePrefix)],
+        },
+      },
+      {
+        loader: 'less-loader',
+        options: {
+          lessOptions: {
+            javascriptEnabled: true,
+          }
+        }
+      }
+    ].filter(Boolean);
+    return loaders;
+  };
+
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
@@ -530,6 +563,28 @@ module.exports = function (webpackEnv) {
                 },
                 'sass-loader'
               ),
+            },
+            {
+              test: /theme\.dark\.less$/,
+              use: getThemedStyleLoaders({
+                importLoaders: 2,
+                sourceMap: isEnvProduction
+                    ? shouldUseSourceMap
+                    : isEnvDevelopment,
+                    modules: false
+              }, '.dark'),
+              sideEffects: true,
+            },
+            {
+              test: /theme\.light\.less$/,
+              use: getThemedStyleLoaders({
+                importLoaders: 2,
+                sourceMap: isEnvProduction
+                    ? shouldUseSourceMap
+                    : isEnvDevelopment,
+                    modules: false
+              }, '.light'),
+              sideEffects: true,
             },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
