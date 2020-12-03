@@ -25,7 +25,7 @@ function App() {
 
   return (
     <Layout>
-      <Content class="content">
+      <Content className="content">
         <Title>{themeTexts[theme].titleText}</Title>
         <Button type="primary" onClick={changeTheme}>{themeTexts[theme].buttonText}</Button>
       </Content>
