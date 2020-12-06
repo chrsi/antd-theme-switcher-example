@@ -1,8 +1,6 @@
 import { Layout, Typography, Button } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css'
-import './theme.dark.less';
-import './theme.light.less';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -21,8 +19,23 @@ const themeTexts = {
 function App() {
   const [theme, setTheme] = useState('light');
 
+  useEffect(() => {
+    downloadTheme(theme);
+  })
+
+  const downloadTheme = (theme) => {
+    if (theme === 'light') {
+      return import('./theme.light.less');
+    } else {
+      return import('./theme.dark.less');
+    }
+  }
+
   const changeTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    downloadTheme(nextTheme).then(() => {
+        setTheme(nextTheme);
+    });
   }
 
   return (
