@@ -17,11 +17,15 @@ const themeTexts = {
 }
 
 function App() {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(localStorage['theme'] || 'light');
 
   useEffect(() => {
-    downloadTheme(theme);
-  })
+    if (localStorage['theme'] === 'dark') {
+      import('./theme.dark.less');
+    } else {
+      import ('./theme.light.less');
+    }
+  });
 
   const downloadTheme = (theme) => {
     if (theme === 'light') {
@@ -35,6 +39,7 @@ function App() {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
     downloadTheme(nextTheme).then(() => {
         setTheme(nextTheme);
+        localStorage['theme'] = nextTheme;
     });
   }
 
